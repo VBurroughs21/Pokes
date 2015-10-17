@@ -19,9 +19,13 @@ class User extends CI_Model {
 	}
 	function all_users($id)
 	{  
-	   	return $this->db->query("SELECT * 
+	   	return $this->db->query("SELECT users.id, users.name, users.alias, users.email, pokes.poked_id, SUM(pokes.num_pokes) AS num_pokes  
 	   							FROM users
-	   							WHERE users.id !=?", 
+	   							LEFT JOIN pokes
+								ON users.id = pokes.poked_id
+	   							WHERE users.id !=?
+	   							GROUP BY pokes.poked_id
+	   							ORDER BY num_pokes DESC", 
 	   							array($this->session->userdata('current_id')))->result_array();
 
 	}
